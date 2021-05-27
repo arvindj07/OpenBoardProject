@@ -11,9 +11,19 @@
 
 <body>
 
-   <!-- Tool-Container  -->
+  <!-- Tool-Container  -->
   <div class="tool-container">
-    <div class="tool tool-active" id="pencil"><img src="./images/pencil.svg"></div>
+    <div class="tool" id="pencil"><img src="./images/pencil.svg">
+    </div>
+    <div class="formatting-tool">
+      <input type="range" id="line" class="line-width" min="5" max="15" value="5">
+      <div class="color-container">
+        <div class="color" colorVal="red"></div>
+        <div class="color" colorVal="blue"></div>
+        <div class="color" colorVal="green"></div>
+      </div>
+    </div>
+
     <div class="tool" id="eraser"><img src="./images//eraser.svg"></div>
     <div class="tool" id="image"><img src="./images/image.svg"></div>
     <div class="tool" id="download"><img src="./images/Download.svg"></div>
@@ -21,8 +31,8 @@
     <div class="tool" id="zoom-out"><img src="./images/zoom_out.png"></div>
   </div>
 
-   <!-- Canvas Board -->
-   <canvas class="board-element" id="board"></canvas>
+  <!-- Canvas Board -->
+  <canvas class="board-element" id="board"></canvas>
 
   <script src="./script.js"></script>
 

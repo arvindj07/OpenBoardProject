@@ -27,7 +27,7 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid; */
+  border: 1px solid;
 }
 .tool>img{
   height: 70%;
@@ -36,6 +36,30 @@ body{
 
 .tool-active{
   background-color: #c7c7c7;
+}
+
+.formatting-tool{
+  position: absolute;
+  top: 15vh;
+  left: 0vw;
+  /* display: none; */
+  border: 1px solid;
+}
+
+.color-container{
+  width: 10rem;
+  height: 2rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  border: 1px solid;
+}
+
+.color{
+  width: 20%;
+  height: 80%;
+  border-radius: 50%;
+  border: 1px solid;  
 }
 
 @media screen and (max-width:900px) {
@@ -54,5 +78,10 @@ body{
   .tool{
     width: 80%;
     height: 15%;
+  }
+
+  .formatting-tool{
+    top: 2vh;
+    left: 6rem;
   }
 }
