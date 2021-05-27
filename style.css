@@ -27,7 +27,7 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid;
+  /* border: 1px solid; */
 }
 .tool>img{
   height: 70%;
@@ -42,8 +42,12 @@ body{
   position: absolute;
   top: 15vh;
   left: 0vw;
-  /* display: none; */
-  border: 1px solid;
+  display: none;
+  /* border: 1px solid; */
+}
+
+.line-width{
+  width: 100%;
 }
 
 .color-container{
@@ -52,14 +56,29 @@ body{
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  border: 1px solid;
+  /* border: 1px solid; */
 }
 
 .color{
   width: 20%;
   height: 80%;
   border-radius: 50%;
-  border: 1px solid;  
+  /* border: 1px solid;   */
+}
+.red{
+  background-color: red;
+  opacity: 0.5;
+}
+.blue{
+  background-color: blue;
+  opacity: 0.5;
+}
+.green{
+  background-color: green;
+  opacity: 0.5;
+}
+.color-active{
+  opacity: 1;
 }
 
 @media screen and (max-width:900px) {

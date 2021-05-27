@@ -9,6 +9,14 @@ let toolState = 0;
 // Pencil
 let pencil = document.querySelector("#pencil");
 let mouseDown;
+// Pencil-Formatting Tool
+let pencilFormatTool = document.querySelector(".formatting-tool");
+let formatToolState = false; // Used to Make FormatTool container visible on-Click
+let lineWidth = document.querySelector(".line-width");
+let allColorEle = document.querySelectorAll(".color");
+let redColor = document.querySelector("#red");
+let blueColor = document.querySelector("#blue");
+let greenColor = document.querySelector("#green");
 //zoom
 let zoomIn = document.querySelector("#zoom-in");
 let zoomOut = document.querySelector("#zoom-out");
@@ -16,14 +24,13 @@ let zoomLevel = 1;
 //Download
 let download = document.querySelector("#download");
 
-
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Pencil
+// **********************************Pencil
 pencil.addEventListener("click", function (e) {
   toolActive(e.currentTarget); // Set Active-State
+  defaultStateFormatTool();// Set-Default Format-Tool State
   mouseDown = false;
   toolState = 1;  // Pencil
   // Reset Zoom i.e, scale()
@@ -50,7 +57,10 @@ function fnMouseMove(e) {
       let x = e.clientX;
       let y = e.clientY;
       // Not to draw over Tool-Container
-      if (y > toolContainer.clientHeight) {
+      if (window.innerWidth>900 && y > toolContainer.clientHeight) {
+        tool.lineTo(x, y);
+        tool.stroke();
+      }else if(window.innerWidth<900 && x > toolContainer.clientWidth){
         tool.lineTo(x, y);
         tool.stroke();
       }
@@ -63,8 +73,47 @@ function fnMouseUp(e) {
   }
 }
 
+//*************************** Pencil Formatting-Tool
+pencil.addEventListener("dblclick", function (e) {
+  if (formatToolState == false) {
+    displayFormatTool();
+  } else {
+    hideFormatTool();
+  }
+  formatToolState = !formatToolState;
+})
+// Handle Click on All Color Elements
+allColorEle.forEach(colorEle => {
+  // Click on Each Color-Element
+  colorEle.addEventListener("click", function (e) {
+    removeColorActiveState();
+    let colorElement = e.currentTarget;
+    colorElement.classList.add("color-active");// Active State
+    tool.strokeStyle = colorElement.getAttribute("colorValue");//set color
+  });
+});
+
+function removeColorActiveState() {
+  allColorEle.forEach(color => {
+    color.classList.remove("color-active");
+  });
+}
+function displayFormatTool() {
+  pencilFormatTool.style.display = "block";
+}
+function hideFormatTool() {
+  pencilFormatTool.style.display = "none";
+}
+function defaultStateFormatTool(){
+  removeColorActiveState();
+  allColorEle[0].classList.add("color-active");// red-color default
+  tool.strokeStyle = "red"; // default
+  tool.lineWidth = "5"; // default
+}
+
 // Zoom-In and Zoom-Out
 zoomIn.addEventListener("click", function (e) {
+  hideFormatTool();
   toolActive(e.currentTarget);
   toolState = 5;  // Zoom_in
   if (toolState == 5) {
@@ -85,6 +134,7 @@ zoomIn.addEventListener("click", function (e) {
 })
 
 zoomOut.addEventListener("click", function (e) {
+  hideFormatTool();
   toolActive(e.currentTarget);
   toolState = 6;  // zoom-Out
   if (toolState == 6) {
@@ -106,6 +156,7 @@ zoomOut.addEventListener("click", function (e) {
 
 // Download
 download.addEventListener("click", function (e) {
+  hideFormatTool();
   toolState = 4;  // Tool-Selected
   toolActive(e.currentTarget);
   downloadCanvas(canvas); // Download Canvas
