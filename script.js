@@ -14,9 +14,11 @@ let pencilFormatTool = document.querySelector(".formatting-tool");
 let formatToolState = false; // Used to Make FormatTool container visible on-Click
 let lineWidth = document.querySelector(".line-width");
 let allColorEle = document.querySelectorAll(".color");
-let redColor = document.querySelector("#red");
-let blueColor = document.querySelector("#blue");
-let greenColor = document.querySelector("#green");
+let lineWidthEle = document.querySelector(".line-width");
+// Eraser
+let eraser = document.querySelector("#eraser");
+let eraserMouseDownState;
+let old;// store coordinates
 //zoom
 let zoomIn = document.querySelector("#zoom-in");
 let zoomOut = document.querySelector("#zoom-out");
@@ -33,47 +35,54 @@ pencil.addEventListener("click", function (e) {
   defaultStateFormatTool();// Set-Default Format-Tool State
   mouseDown = false;
   toolState = 1;  // Pencil
-  // Reset Zoom i.e, scale()
-  tool.setTransform(1, 0, 0, 1, 0, 0);
-  document.addEventListener("mousedown", fnMouseDown);
-  document.addEventListener("mousemove", fnMouseMove);
-  document.addEventListener("mouseup", fnMouseUp);
+
+  document.addEventListener("mousedown", pencilMouseDown);
+  document.addEventListener("mousemove", pencilMouseMove);
+  document.addEventListener("mouseup", pencilMouseUp);
 
 
 })
 
-function fnMouseDown(e) {
+function pencilMouseDown(e) {
   if (toolState == 1) { // Check-Tool State
     mouseDown = true;
     tool.beginPath();
     let x = e.clientX;
     let y = e.clientY;
-    tool.moveTo(x, y);
+    // Not to draw over Tool-Container and Formatting Tool
+    let obj = pencilFormatTool.getBoundingClientRect();
+    if (window.innerWidth > 900 && y > toolContainer.clientHeight && y > obj.bottom) {
+      tool.moveTo(x, y);
+    } else if (window.innerWidth < 900 && x > toolContainer.clientWidth && x > obj.right) {
+      tool.moveTo(x, y);
+    }
   }
 }
-function fnMouseMove(e) {
+function pencilMouseMove(e) {
   if (toolState == 1) {
     if (mouseDown) {
       let x = e.clientX;
       let y = e.clientY;
-      // Not to draw over Tool-Container
-      if (window.innerWidth>900 && y > toolContainer.clientHeight) {
+      // Not to draw over Tool-Container and Formatting Tool
+      let obj = pencilFormatTool.getBoundingClientRect();
+      if (window.innerWidth > 900 && y > toolContainer.clientHeight && y > obj.bottom) {
         tool.lineTo(x, y);
         tool.stroke();
-      }else if(window.innerWidth<900 && x > toolContainer.clientWidth){
+      } else if (window.innerWidth < 900 && x > toolContainer.clientWidth && x > obj.right) {
         tool.lineTo(x, y);
         tool.stroke();
       }
     }
   }
 }
-function fnMouseUp(e) {
+function pencilMouseUp(e) {
   if (toolState == 1) {
     mouseDown = false;
   }
 }
 
 //*************************** Pencil Formatting-Tool
+// Make Format Tool visible nd invisible 
 pencil.addEventListener("dblclick", function (e) {
   if (formatToolState == false) {
     displayFormatTool();
@@ -92,7 +101,10 @@ allColorEle.forEach(colorEle => {
     tool.strokeStyle = colorElement.getAttribute("colorValue");//set color
   });
 });
-
+// Set Line-width 
+lineWidth.addEventListener("change", function (e) {
+  tool.lineWidth = lineWidth.valueAsNumber;
+})
 function removeColorActiveState() {
   allColorEle.forEach(color => {
     color.classList.remove("color-active");
@@ -104,16 +116,63 @@ function displayFormatTool() {
 function hideFormatTool() {
   pencilFormatTool.style.display = "none";
 }
-function defaultStateFormatTool(){
+function defaultStateFormatTool() {
   removeColorActiveState();
   allColorEle[0].classList.add("color-active");// red-color default
   tool.strokeStyle = "red"; // default
   tool.lineWidth = "5"; // default
 }
 
-// Zoom-In and Zoom-Out
-zoomIn.addEventListener("click", function (e) {
+//****************************** Eraser
+eraser.addEventListener("click", function (e) {
   hideFormatTool();
+  toolActive(e.currentTarget);
+  toolState = 2;  // Eraser
+
+  document.addEventListener("mousedown", eraserMouseDown);
+  document.addEventListener("mousemove", eraserMouseMove);
+  document.addEventListener("mouseup", eraserMouseUp);
+})
+
+function eraserMouseDown(e) {
+  if (toolState == 2) { // Check-Tool State
+    eraserMouseDownState = true;
+    old = { x: e.clientX, y: e.clientY };
+  }
+}
+function eraserMouseMove(e) {
+  if (toolState == 2) {
+    if (eraserMouseDownState) {
+      let x = e.clientX;
+      let y = e.clientY;
+      // Erase Content - Code
+      // To give Eraser a Circle-shape
+      tool.globalCompositeOperation = 'destination-out';
+      tool.beginPath();
+      tool.arc(x, y, 10, 0, 2 * Math.PI);
+      tool.fill();
+      // To Erase it in a line
+      tool.lineWidth = 5;
+      tool.beginPath();
+      tool.moveTo(old.x, old.y);
+      tool.lineTo(x, y);
+      tool.stroke();
+      old = { x: x, y: y };
+    }
+  }
+}
+function eraserMouseUp(e) {
+  if (toolState == 2) {
+    eraserMouseDownState = false;
+    tool.globalCompositeOperation = 'source-over'; // reset to default-value
+  }
+}
+
+
+
+//*************************** Zoom-In and Zoom-Out
+zoomIn.addEventListener("click", function (e) {
+  hideFormatTool(); // Hide the Pencil Formatting Tool
   toolActive(e.currentTarget);
   toolState = 5;  // Zoom_in
   if (toolState == 5) {
@@ -154,7 +213,7 @@ zoomOut.addEventListener("click", function (e) {
   }
 })
 
-// Download
+//**************************** Download
 download.addEventListener("click", function (e) {
   hideFormatTool();
   toolState = 4;  // Tool-Selected
