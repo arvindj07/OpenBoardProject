@@ -129,7 +129,7 @@ function defaultStateFormatTool() {
   lineWidth.value = 5;
 }
 
-//****************************** Eraser
+//****************************** Eraser-Tool
 eraser.addEventListener("click", function (e) {
   hideFormatTool(pencilFormatTool);
   toolActive(e.currentTarget);
