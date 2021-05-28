@@ -14,11 +14,14 @@ let pencilFormatTool = document.querySelector(".formatting-tool");
 let formatToolState = false; // Used to Make FormatTool container visible on-Click
 let lineWidth = document.querySelector(".line-width");
 let allColorEle = document.querySelectorAll(".color");
-let lineWidthEle = document.querySelector(".line-width");
+let lineWidthEle = document.querySelector("#pencil-line-width");
 // Eraser
 let eraser = document.querySelector("#eraser");
 let eraserMouseDownState;
 let old;// store coordinates
+let eraserFormatTool = document.querySelector(".eraser-formatting-tool");
+let eraserToolState = false;
+let eraserWidthEle = document.querySelector("#eraser-line-width");
 //zoom
 let zoomIn = document.querySelector("#zoom-in");
 let zoomOut = document.querySelector("#zoom-out");
@@ -31,6 +34,7 @@ canvas.height = window.innerHeight;
 
 // **********************************Pencil
 pencil.addEventListener("click", function (e) {
+  hideFormatTool(eraserFormatTool); // Hide Eraser Tool
   toolActive(e.currentTarget); // Set Active-State
   defaultStateFormatTool();// Set-Default Format-Tool State
   mouseDown = false;
@@ -84,10 +88,11 @@ function pencilMouseUp(e) {
 //*************************** Pencil Formatting-Tool
 // Make Format Tool visible nd invisible 
 pencil.addEventListener("dblclick", function (e) {
+  defaultStateFormatTool();
   if (formatToolState == false) {
-    displayFormatTool();
+    displayFormatTool(pencilFormatTool);
   } else {
-    hideFormatTool();
+    hideFormatTool(pencilFormatTool);
   }
   formatToolState = !formatToolState;
 })
@@ -110,24 +115,27 @@ function removeColorActiveState() {
     color.classList.remove("color-active");
   });
 }
-function displayFormatTool() {
-  pencilFormatTool.style.display = "block";
+function displayFormatTool(formattingTool) {
+  formattingTool.style.display = "block";
 }
-function hideFormatTool() {
-  pencilFormatTool.style.display = "none";
+function hideFormatTool(formattingTool) {
+  formattingTool.style.display = "none";
 }
 function defaultStateFormatTool() {
   removeColorActiveState();
   allColorEle[0].classList.add("color-active");// red-color default
   tool.strokeStyle = "red"; // default
   tool.lineWidth = "5"; // default
+  lineWidth.value = 5;
 }
 
 //****************************** Eraser
 eraser.addEventListener("click", function (e) {
-  hideFormatTool();
+  hideFormatTool(pencilFormatTool);
   toolActive(e.currentTarget);
   toolState = 2;  // Eraser
+  tool.lineWidth = "5"; // default
+  eraserWidthEle.value = 5; // default
 
   document.addEventListener("mousedown", eraserMouseDown);
   document.addEventListener("mousemove", eraserMouseMove);
@@ -149,10 +157,9 @@ function eraserMouseMove(e) {
       // To give Eraser a Circle-shape
       tool.globalCompositeOperation = 'destination-out';
       tool.beginPath();
-      tool.arc(x, y, 10, 0, 2 * Math.PI);
+      tool.arc(x, y, tool.lineWidth, 0, 2 * Math.PI);
       tool.fill();
       // To Erase it in a line
-      tool.lineWidth = 5;
       tool.beginPath();
       tool.moveTo(old.x, old.y);
       tool.lineTo(x, y);
@@ -168,11 +175,27 @@ function eraserMouseUp(e) {
   }
 }
 
+// Make Format Tool visible nd invisible 
+eraser.addEventListener("dblclick", function (e) {
+  tool.lineWidth = "5"; // default
+  eraserWidthEle.value = 5; // default
+  if (eraserToolState == false) {
+    displayFormatTool(eraserFormatTool);
+  } else {
+    hideFormatTool(eraserFormatTool);
+  }
+  eraserToolState = !eraserToolState;
+})
+// Set Eraser Line-width 
+eraserWidthEle.addEventListener("change", function (e) {
+  tool.lineWidth = eraserWidthEle.valueAsNumber;
+})
 
 
 //*************************** Zoom-In and Zoom-Out
 zoomIn.addEventListener("click", function (e) {
-  hideFormatTool(); // Hide the Pencil Formatting Tool
+  hideFormatTool(pencilFormatTool);// Hide the Pencil Formatting Tool
+  hideFormatTool(eraserFormatTool);// Hide the Eraser Formatting Tool
   toolActive(e.currentTarget);
   toolState = 5;  // Zoom_in
   if (toolState == 5) {
@@ -193,7 +216,8 @@ zoomIn.addEventListener("click", function (e) {
 })
 
 zoomOut.addEventListener("click", function (e) {
-  hideFormatTool();
+  hideFormatTool(pencilFormatTool);
+  hideFormatTool(eraserFormatTool);
   toolActive(e.currentTarget);
   toolState = 6;  // zoom-Out
   if (toolState == 6) {
@@ -215,7 +239,8 @@ zoomOut.addEventListener("click", function (e) {
 
 //**************************** Download
 download.addEventListener("click", function (e) {
-  hideFormatTool();
+  hideFormatTool(pencilFormatTool);
+  hideFormatTool(eraserFormatTool);
   toolState = 4;  // Tool-Selected
   toolActive(e.currentTarget);
   downloadCanvas(canvas); // Download Canvas

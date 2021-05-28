@@ -81,6 +81,15 @@ body{
   opacity: 1;
 }
 
+.eraser-formatting-tool{
+  position: absolute;
+  top: 15vh;
+  left: 7vw;
+  width: 8rem;
+  display: none;
+  /* border: 1px solid; */
+}
+
 @media screen and (max-width:900px) {
   .tool-container{
     flex-direction: column;
@@ -103,4 +112,9 @@ body{
     top: 2vh;
     left: 6rem;
   }
+
+  .eraser-formatting-tool{
+    top: 2vh;
+    left: 6rem;
+  } 
 }
