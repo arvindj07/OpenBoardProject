@@ -200,11 +200,12 @@ zoomIn.addEventListener("click", function (e) {
   toolState = 5;  // Zoom_in
   if (toolState == 5) {
     zoomLevel = 1.05;
-    tool.scale(zoomLevel, zoomLevel);
     // Copy Canvas Content to another Canvas
     let canvasCopy = copyOfCanvas(canvas);
     // Clear canvas
     tool.clearRect(0, 0, canvas.width, canvas.height);
+    // Zoom
+    tool.scale(zoomLevel, zoomLevel);
     // Center-Zoom
     let x = (canvas.width / zoomLevel - canvas.width) / 2;
     let y = (canvas.height / zoomLevel - canvas.height) / 2;
@@ -222,11 +223,12 @@ zoomOut.addEventListener("click", function (e) {
   toolState = 6;  // zoom-Out
   if (toolState == 6) {
     zoomLevel = 0.95;
-    tool.scale(zoomLevel, zoomLevel);
     // Copy Canvas Content to another Canvas
     let canvasCopy = copyOfCanvas(canvas);
     // Clear canvas
     tool.clearRect(0, 0, canvas.width, canvas.height);
+    // Zoom
+    tool.scale(zoomLevel, zoomLevel);
     // Center-Zoom
     let x = (canvas.width / zoomLevel - canvas.width) / 2;
     let y = (canvas.height / zoomLevel - canvas.height) / 2;
