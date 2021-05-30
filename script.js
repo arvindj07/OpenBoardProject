@@ -199,8 +199,8 @@ fileInput.addEventListener("change", function (e) {
   // Create and Append Pic-Container To DOM->body
   let pic_container = createPicContainer(file);
   allPicContainers = document.querySelector(".pic-container");// to update Array-list
-  // Add event-listener to move pic_container
-  moveAndDragPicContainer(pic_container);
+  moveAndDragPicContainer(pic_container);// Add event-listener to move pic_container
+  deletePicContainer(pic_container);// Add event-listener to delete pic_container
 })
 
 // Create Pic-Container for Image-File
@@ -219,6 +219,15 @@ function createPicContainer(file) {
   pic_container.appendChild(img);
   document.body.appendChild(pic_container);
   return pic_container;
+}
+
+function deletePicContainer(pic_container){
+  pic_container.addEventListener("click",function(e){
+    let deletePic=window.confirm(`Press- OK to Delete Image \nPress- Cancel to Move Image `);
+    if(deletePic){
+      pic_container.remove();
+    }
+  })
 }
 
 // Move Pic-Container
