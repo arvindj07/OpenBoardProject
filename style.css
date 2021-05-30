@@ -30,7 +30,7 @@ body{
   align-items: center;
   /* border: 1px solid; */
 }
-.tool>img{
+.tool img{
   height: 70%;
   width: 70%;
 }
@@ -85,14 +85,25 @@ body{
   opacity: 1;
 }
 
+/* Image-Tool  */
+
+/* to hide input and only show icon/img  */
+#image>input {
+  display: none;
+}
+
 /* Pic Container  */
 #pic-container{
   position: fixed;
-  background-color: blue;
   width: 160px;
   height: 160px;
   top: 40vh;
   left: 40vw;
+  /* border: 1px solid;   */
+}
+#pic-container img{
+  width: 95%;
+  height: 95%;
 }
 
  /* Eraser Tool  */

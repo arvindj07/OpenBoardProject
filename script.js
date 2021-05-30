@@ -22,10 +22,14 @@ let old;// store coordinates
 let eraserFormatTool = document.querySelector(".eraser-formatting-tool");
 let eraserToolState = false;
 let eraserWidthEle = document.querySelector("#eraser-line-width");
+// Image-tool
+let image = document.querySelector("#image");
 //Picture/Image Container
-let picContainer=document.querySelector("#pic-container");
+let allPicContainers = document.querySelector(".pic-container");
 let picMouseDown = false;
 let picClick = false;
+let picFileNo = 1;
+let clickedPicNo=0; // Used to differentate among diff Images that are present and clicked Image
 //zoom
 let zoomIn = document.querySelector("#zoom-in");
 let zoomOut = document.querySelector("#zoom-out");
@@ -184,32 +188,67 @@ eraserWidthEle.addEventListener("change", function (e) {
   tool.lineWidth = eraserWidthEle.valueAsNumber;
 })
 
-//********************************* Pic-Container */
-// Move Pic-Container
-picContainer.addEventListener("click", function (e) {
-  picClick = true;
-  
-  // Move Pic on Mouse-Events
-  document.addEventListener("mousedown", function (e) {
-    picMouseDown = true;
-  })
-  document.addEventListener("mousemove", function (e) {
-    if (picMouseDown && picClick && toolState==3) {
-      let x = e.pageX,
-        y = e.pageY;
-        picContainer.style.top = (y + 10) + 'px';
-        picContainer.style.left = (x + 10) + 'px';
-    }
-  })
-  document.addEventListener("mouseup", function (e) {
-    picMouseDown = false;
-  })
+// ************************************* Image Tool
+
+// Add-Image  . Here, no need to click on Image-Tool -> image,just handle input-file -> change-event 
+let fileInput = document.querySelector("#file-input");
+// When file is selected from input
+fileInput.addEventListener("change", function (e) {
+  toolState=3;
+  let file = fileInput.files; // img-file
+  // Create and Append Pic-Container To DOM->body
+  let pic_container = createPicContainer(file);
+  allPicContainers = document.querySelector(".pic-container");// to update Array-list
+  // Add event-listener to move pic_container
+  moveAndDragPicContainer(pic_container);
 })
 
+// Create Pic-Container for Image-File
+function createPicContainer(file) {
+  // create-div and set class and id and picFileNo
+  let pic_container = document.createElement("div")
+  pic_container.classList.add("pic-container");
+  pic_container.setAttribute("id", "pic-container");
+  pic_container.setAttribute("picFileNo", picFileNo);
+  clickedPicNo=picFileNo; // click the Image by default
+  picFileNo++;
+  // create- img and set src
+  let img = document.createElement("img");
+  img.src = URL.createObjectURL(file[0]);
+  // Append both to DOM
+  pic_container.appendChild(img);
+  document.body.appendChild(pic_container);
+  return pic_container;
+}
+
+// Move Pic-Container
+function moveAndDragPicContainer(pic_container) {
+  pic_container.addEventListener("click", function (e) {
+    picClick = true;
+    clickedPicNo=pic_container.getAttribute("picFileNo");
+
+    // Move Pic on Mouse-Events
+    document.addEventListener("mousedown", function (e) {
+      picMouseDown = true;
+    })
+    document.addEventListener("mousemove", function (e) {
+      let currentPicNo=pic_container.getAttribute("picFileNo");
+      if (picMouseDown && picClick && toolState == 3 && clickedPicNo==currentPicNo) {
+        let x = e.pageX,
+          y = e.pageY;
+          pic_container.style.top = (y + 10) + 'px';
+          pic_container.style.left = (x + 10) + 'px';
+      }
+    })
+    document.addEventListener("mouseup", function (e) {
+      picMouseDown = false;
+    })
+  })
+}
 
 // Reset Pic-Click ,i.e, Stop Pic from Moving
-toolContainer.addEventListener("click",function(e){
-  picClick=false;
+toolContainer.addEventListener("click", function (e) {
+  picClick = false;
 })
 
 

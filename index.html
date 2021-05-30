@@ -28,13 +28,19 @@
     <div class="eraser-formatting-tool">
       <input type="range" id="eraser-line-width" class="line-width" min="5" max="15" value="5">
     </div>
-    <div class="tool" id="image"><img src="./images/image.svg"></div>
+    <div class="tool" id="image">
+      <!-- Replace input type=file by an image -->
+      <label for="file-input">
+        <img src="./images/image.svg">
+      </label>    
+      <input id="file-input" type="file" />      
+    </div>
     <div class="tool" id="download"><img src="./images/Download.svg"></div>
     <div class="tool" id="zoom-in"><img src="./images/zoom_in.png"></div>
     <div class="tool" id="zoom-out"><img src="./images/zoom_out.png"></div>
   </div>
 
-  <div id="pic-container" class="pic-container">Image</div>
+  <!-- <div id="pic-container" class="pic-container"><img src="./images/image.svg"></div> -->
 
   <!-- Canvas Board -->
   <canvas class="board-element" id="board"></canvas>
