@@ -105,6 +105,16 @@ body{
   width: 95%;
   height: 95%;
 }
+.file-img-label{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.file-img{
+  position: absolute;  
+  top: 1.1vh;
+  left: 1.6vw;
+}
 
  /* Eraser Tool  */
 .eraser-formatting-tool{
@@ -147,4 +157,9 @@ body{
     top: 16vh;
     left: 6rem;
   } 
+  
+  .file-img{
+    top: 1.1vh;
+    left: 0.8rem;
+  }
 }

@@ -194,6 +194,9 @@ eraserWidthEle.addEventListener("change", function (e) {
 let fileInput = document.querySelector("#file-input");
 // When file is selected from input
 fileInput.addEventListener("change", function (e) {
+  hideFormatTool(pencilFormatTool);
+  hideFormatTool(eraserFormatTool);
+  toolActive(image);// Set Image as Active
   toolState=3;
   let file = fileInput.files; // img-file
   // Create and Append Pic-Container To DOM->body
