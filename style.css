@@ -16,6 +16,7 @@ body{
   justify-content: space-evenly;
   align-items: center;
   border-radius: 9%;
+  background-color: #FFFFFF;
   box-shadow: 7px 10px 5px #b7afaf;
   /* border: 1px solid; */
 }
@@ -43,11 +44,14 @@ body{
   top: 15vh;
   left: 0vw;
   display: none;
-  /* border: 1px solid; */
+  background-color: #FFFFFF;
+  border-radius: 7%;
+  box-shadow: 7px 10px 5px #b7afaf;
+  border: 1px solid #afa3a3;
 }
 
 .line-width{
-  width: 100%;
+  width: 95%;
 }
 
 .color-container{
@@ -81,15 +85,30 @@ body{
   opacity: 1;
 }
 
+/* Pic Container  */
+#pic-container{
+  position: fixed;
+  background-color: blue;
+  width: 160px;
+  height: 160px;
+  top: 40vh;
+  left: 40vw;
+}
+
+ /* Eraser Tool  */
 .eraser-formatting-tool{
   position: absolute;
   top: 15vh;
   left: 7vw;
   width: 8rem;
   display: none;
-  /* border: 1px solid; */
+  background-color: #FFFFFF;
+  border-radius: 7%;
+  box-shadow: 7px 10px 5px #b7afaf;
+  border: 1px solid #afa3a3;
 }
 
+ /* Handle Style on Change of Screen-Size */
 @media screen and (max-width:900px) {
   .tool-container{
     flex-direction: column;
@@ -114,7 +133,7 @@ body{
   }
 
   .eraser-formatting-tool{
-    top: 2vh;
+    top: 16vh;
     left: 6rem;
   } 
 }

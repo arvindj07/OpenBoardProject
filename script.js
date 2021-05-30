@@ -22,6 +22,10 @@ let old;// store coordinates
 let eraserFormatTool = document.querySelector(".eraser-formatting-tool");
 let eraserToolState = false;
 let eraserWidthEle = document.querySelector("#eraser-line-width");
+//Picture/Image Container
+let picContainer=document.querySelector("#pic-container");
+let picMouseDown = false;
+let picClick = false;
 //zoom
 let zoomIn = document.querySelector("#zoom-in");
 let zoomOut = document.querySelector("#zoom-out");
@@ -47,19 +51,15 @@ pencil.addEventListener("click", function (e) {
 
 })
 
+// Handle -Pencil MouseDown,MouseMove and MouseUp
 function pencilMouseDown(e) {
   if (toolState == 1) { // Check-Tool State
     mouseDown = true;
     tool.beginPath();
     let x = e.clientX;
     let y = e.clientY;
-    // Not to draw over Tool-Container and Formatting Tool
-    let obj = pencilFormatTool.getBoundingClientRect();
-    if (window.innerWidth > 900 && y > toolContainer.clientHeight && y > obj.bottom) {
-      tool.moveTo(x, y);
-    } else if (window.innerWidth < 900 && x > toolContainer.clientWidth && x > obj.right) {
-      tool.moveTo(x, y);
-    }
+    tool.moveTo(x, y);
+
   }
 }
 function pencilMouseMove(e) {
@@ -67,15 +67,8 @@ function pencilMouseMove(e) {
     if (mouseDown) {
       let x = e.clientX;
       let y = e.clientY;
-      // Not to draw over Tool-Container and Formatting Tool
-      let obj = pencilFormatTool.getBoundingClientRect();
-      if (window.innerWidth > 900 && y > toolContainer.clientHeight && y > obj.bottom) {
-        tool.lineTo(x, y);
-        tool.stroke();
-      } else if (window.innerWidth < 900 && x > toolContainer.clientWidth && x > obj.right) {
-        tool.lineTo(x, y);
-        tool.stroke();
-      }
+      tool.lineTo(x, y);
+      tool.stroke();
     }
   }
 }
@@ -190,6 +183,36 @@ eraser.addEventListener("dblclick", function (e) {
 eraserWidthEle.addEventListener("change", function (e) {
   tool.lineWidth = eraserWidthEle.valueAsNumber;
 })
+
+//********************************* Pic-Container */
+// Move Pic-Container
+picContainer.addEventListener("click", function (e) {
+  picClick = true;
+  
+  // Move Pic on Mouse-Events
+  document.addEventListener("mousedown", function (e) {
+    picMouseDown = true;
+  })
+  document.addEventListener("mousemove", function (e) {
+    if (picMouseDown && picClick && toolState==3) {
+      let x = e.pageX,
+        y = e.pageY;
+        picContainer.style.top = (y + 10) + 'px';
+        picContainer.style.left = (x + 10) + 'px';
+    }
+  })
+  document.addEventListener("mouseup", function (e) {
+    picMouseDown = false;
+  })
+})
+
+
+// Reset Pic-Click ,i.e, Stop Pic from Moving
+toolContainer.addEventListener("click",function(e){
+  picClick=false;
+})
+
+
 
 
 //*************************** Zoom-In and Zoom-Out

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    #temp {
+      position: fixed;
+      background-color: blue;
+      width: 160px;
+      height: 160px;
+      top: 40vh;
+      left: 40vw;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="temp">Image</div>
+
+  <!-- code  -->
+  <script>
+    let ele = document.querySelector("#temp");
+    let eleMouseDown = false;
+    let eleClick = false;
+    ele.addEventListener("click", function (e) {
+      eleClick = true;
+      document.addEventListener("mousedown", function (e) {
+        eleMouseDown = true;
+      })
+
+      document.addEventListener("mousemove", function (e) {
+        if (eleMouseDown && eleClick) {
+          var x = e.pageX,
+            y = e.pageY;
+          ele.style.top = (y + 10) + 'px';
+          ele.style.left = (x + 10) + 'px';
+
+        }
+      })
+
+      document.addEventListener("mouseup", function (e) {
+        eleMouseDown = false;
+      })
+    })
+
+    
+
+    // window.onmousemove = function (e) {
+    //   var x = e.pageX,
+    //     y = e.pageY;
+    //     ele.style.top = (y + 20) + 'px';
+    //     ele.style.left = (x + 20) + 'px';
+    // };
+
+  </script>
+</body>
+
+</html>
