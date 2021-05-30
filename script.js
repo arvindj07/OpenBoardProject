@@ -25,7 +25,7 @@ let eraserWidthEle = document.querySelector("#eraser-line-width");
 // Image-tool
 let image = document.querySelector("#image");
 //Picture/Image Container
-let allPicContainers = document.querySelector(".pic-container");
+let allPicContainers = document.querySelectorAll(".pic-container");
 let picMouseDown = false;
 let picClick = false;
 let picFileNo = 1;
@@ -201,7 +201,7 @@ fileInput.addEventListener("change", function (e) {
   let file = fileInput.files; // img-file
   // Create and Append Pic-Container To DOM->body
   let pic_container = createPicContainer(file);
-  allPicContainers = document.querySelector(".pic-container");// to update Array-list
+  allPicContainers = document.querySelectorAll(".pic-container");// to update Array-list
   moveAndDragPicContainer(pic_container);// Add event-listener to move pic_container
   deletePicContainer(pic_container);// Add event-listener to delete pic_container
 })
@@ -223,7 +223,7 @@ function createPicContainer(file) {
   document.body.appendChild(pic_container);
   return pic_container;
 }
-
+//Delete PicContainer
 function deletePicContainer(pic_container){
   pic_container.addEventListener("click",function(e){
     let deletePic=window.confirm(`Press- OK to Delete Image \nPress- Cancel to Move Image `);
@@ -262,8 +262,6 @@ function moveAndDragPicContainer(pic_container) {
 toolContainer.addEventListener("click", function (e) {
   picClick = false;
 })
-
-
 
 
 //*************************** Zoom-In and Zoom-Out
@@ -344,11 +342,27 @@ function toolActive(currTool) {
 
 // Download Canvas Image
 function downloadCanvas(canvas) {
-  let url = canvas.toDataURL();
+  let canvasCopy = copyOfCanvas(canvas);  // Copy Canvas
+  drawPicturesToCanvas(canvasCopy); // draw on canvas Copy
+  let url = canvasCopy.toDataURL();
   let a = document.createElement("a");
   a.href = url;
   a.download = "file.png";
   a.click();
   a.remove();
+}
+
+// Draw All-Added Pictures on CanvasCopy
+function drawPicturesToCanvas(canvasCopy){
+  if(allPicContainers){
+    allPicContainers.forEach(picContainerEle => {
+      let obj=picContainerEle.getBoundingClientRect();
+      let copyTool=canvasCopy.getContext("2d");
+      let imageEle=picContainerEle.childNodes[0];
+      let width=obj.right-obj.left;
+      let height=obj.bottom-obj.top;
+      copyTool.drawImage(imageEle,obj.left,obj.top,width,height);
+    });
+  }  
 }
 
