@@ -48,7 +48,7 @@ canvas.height = window.innerHeight;
 undoRedoArr.push(canvas); // Initially Adding Canvas
 undoRedoIdx++;
 
-// **********************************Pencil
+// ******************************************* Pencil
 pencil.addEventListener("click", function (e) {
   hideFormatTool(eraserFormatTool); // Hide Eraser Tool
   toolActive(e.currentTarget); // Set Active-State
@@ -99,7 +99,7 @@ function pencilMouseUp(e) {
   }
 }
 
-//*************************** Pencil Formatting-Tool
+//*********************************** Pencil Formatting-Tool
 // Make Format Tool visible nd invisible 
 pencil.addEventListener("dblclick", function (e) {
   defaultStateFormatTool();
@@ -124,17 +124,21 @@ allColorEle.forEach(colorEle => {
 lineWidth.addEventListener("change", function (e) {
   tool.lineWidth = lineWidth.valueAsNumber;
 })
+// Colors In Pencil Formatting State
 function removeColorActiveState() {
   allColorEle.forEach(color => {
     color.classList.remove("color-active");
   });
 }
+// To Display Formatting tool of Pencil/Eraser
 function displayFormatTool(formattingTool) {
   formattingTool.style.display = "block";
 }
+// To Hide Formatting tool of Pencil/Eraser
 function hideFormatTool(formattingTool) {
   formattingTool.style.display = "none";
 }
+// Set Default State of Pencil-Formatting Tool
 function defaultStateFormatTool() {
   removeColorActiveState();
   allColorEle[0].classList.add("color-active");// red-color default
@@ -143,7 +147,7 @@ function defaultStateFormatTool() {
   lineWidth.value = 5;
 }
 
-//****************************** Eraser-Tool
+//****************************************  Eraser-Tool
 eraser.addEventListener("click", function (e) {
   hideFormatTool(pencilFormatTool);
   toolActive(e.currentTarget);
@@ -213,7 +217,7 @@ eraserWidthEle.addEventListener("change", function (e) {
   tool.lineWidth = eraserWidthEle.valueAsNumber;
 })
 
-// ************************************* Image Tool
+// *************************************** Image Tool
 
 // Add-Image  . Here, no need to click on Image-Tool -> image,just handle input-file -> change-event 
 // When file is selected from input
@@ -252,6 +256,7 @@ function createPicContainer(file) {
   document.body.appendChild(pic_container);
   return pic_container;
 }
+
 //Delete PicContainer
 function deletePicContainer(pic_container) {
   pic_container.addEventListener("click", function (e) {
@@ -294,7 +299,7 @@ toolContainer.addEventListener("click", function (e) {
 })
 
 
-//*************************** Zoom-In and Zoom-Out
+//************************************** Zoom-In and Zoom-Out
 zoomIn.addEventListener("click", function (e) {
   // Reset undo-redo Array
   if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
@@ -351,7 +356,7 @@ zoomOut.addEventListener("click", function (e) {
   }
 })
 
-//**************************** Download
+//************************************** Download
 download.addEventListener("click", function (e) {
   // Reset undo-redo Array
   if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
@@ -411,7 +416,7 @@ function drawPicturesToCanvas(canvasCopy) {
   }
 }
 
-// ***************************Undo-Redo Operation
+// ********************************   Undo-Redo Operation
 undo.addEventListener("mousedown", function (e) {
   hideFormatTool(pencilFormatTool);
   hideFormatTool(eraserFormatTool);
