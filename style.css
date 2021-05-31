@@ -10,7 +10,7 @@ body{
   z-index: 5;
   position: fixed;
   left: calc(100vw/3);
-  width: 30rem;
+  width: 35rem;
   height: 5rem;
   display: flex;
   justify-content: space-evenly;

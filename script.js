@@ -24,21 +24,29 @@ let eraserToolState = false;
 let eraserWidthEle = document.querySelector("#eraser-line-width");
 // Image-tool
 let image = document.querySelector("#image");
+let fileInput = document.querySelector("#file-input");
 //Picture/Image Container
 let allPicContainers = document.querySelectorAll(".pic-container");
 let picMouseDown = false;
 let picClick = false;
 let picFileNo = 1;
-let clickedPicNo=0; // Used to differentate among diff Images that are present and clicked Image
+let clickedPicNo = 0; // Used to differentate among diff Images that are present and clicked Image
 //zoom
 let zoomIn = document.querySelector("#zoom-in");
 let zoomOut = document.querySelector("#zoom-out");
 let zoomLevel = 1;
 //Download
 let download = document.querySelector("#download");
+// Undo-Redo
+let undo = document.querySelector("#undo");
+let redo = document.querySelector("#redo");
+let undoRedoArr = []; // Store canvas copy after each operation, except image-add operation
+let undoRedoIdx = -1; // current-idx of undoRedoArr
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+undoRedoArr.push(canvas); // Initially Adding Canvas
+undoRedoIdx++;
 
 // **********************************Pencil
 pencil.addEventListener("click", function (e) {
@@ -47,6 +55,11 @@ pencil.addEventListener("click", function (e) {
   defaultStateFormatTool();// Set-Default Format-Tool State
   mouseDown = false;
   toolState = 1;  // Pencil
+
+  // Reset undo-redo Array
+  if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
+    undoRedoArr.splice(undoRedoIdx+1);
+  }
 
   document.addEventListener("mousedown", pencilMouseDown);
   document.addEventListener("mousemove", pencilMouseMove);
@@ -79,6 +92,10 @@ function pencilMouseMove(e) {
 function pencilMouseUp(e) {
   if (toolState == 1) {
     mouseDown = false;
+    // Store Current-Canvas Copy
+    let canvasCopy = copyOfCanvas(canvas);
+    undoRedoArr.push(canvasCopy);
+    undoRedoIdx++;
   }
 }
 
@@ -134,6 +151,11 @@ eraser.addEventListener("click", function (e) {
   tool.lineWidth = "5"; // default
   eraserWidthEle.value = 5; // default
 
+  // Reset undo-redo Array
+  if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
+    undoRedoArr.splice(undoRedoIdx+1);
+  }
+
   document.addEventListener("mousedown", eraserMouseDown);
   document.addEventListener("mousemove", eraserMouseMove);
   document.addEventListener("mouseup", eraserMouseUp);
@@ -169,6 +191,9 @@ function eraserMouseUp(e) {
   if (toolState == 2) {
     eraserMouseDownState = false;
     tool.globalCompositeOperation = 'source-over'; // reset to default-value
+    let canvasCopy = copyOfCanvas(canvas);
+    undoRedoArr.push(canvasCopy); // Store copy of canvas
+    undoRedoIdx++;
   }
 }
 
@@ -191,13 +216,17 @@ eraserWidthEle.addEventListener("change", function (e) {
 // ************************************* Image Tool
 
 // Add-Image  . Here, no need to click on Image-Tool -> image,just handle input-file -> change-event 
-let fileInput = document.querySelector("#file-input");
 // When file is selected from input
 fileInput.addEventListener("change", function (e) {
+  // Reset undo-redo Array
+  if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
+    undoRedoArr.splice(undoRedoIdx+1);
+  }
+
   hideFormatTool(pencilFormatTool);
   hideFormatTool(eraserFormatTool);
   toolActive(image);// Set Image as Active
-  toolState=3;
+  toolState = 3;
   let file = fileInput.files; // img-file
   // Create and Append Pic-Container To DOM->body
   let pic_container = createPicContainer(file);
@@ -213,7 +242,7 @@ function createPicContainer(file) {
   pic_container.classList.add("pic-container");
   pic_container.setAttribute("id", "pic-container");
   pic_container.setAttribute("picFileNo", picFileNo);
-  clickedPicNo=picFileNo; // click the Image by default
+  clickedPicNo = picFileNo; // click the Image by default
   picFileNo++;
   // create- img and set src
   let img = document.createElement("img");
@@ -224,11 +253,12 @@ function createPicContainer(file) {
   return pic_container;
 }
 //Delete PicContainer
-function deletePicContainer(pic_container){
-  pic_container.addEventListener("click",function(e){
-    let deletePic=window.confirm(`Press- OK to Delete Image \nPress- Cancel to Move Image `);
-    if(deletePic){
+function deletePicContainer(pic_container) {
+  pic_container.addEventListener("click", function (e) {
+    let deletePic = window.confirm(`Press- OK to Delete Image \nPress- Cancel to Move Image `);
+    if (deletePic) {
       pic_container.remove();
+      // we also need to remove selected pic_container from allPicContainers-array.But as pic_container becomes empty after deletion, its option to update the Array
     }
   })
 }
@@ -237,19 +267,19 @@ function deletePicContainer(pic_container){
 function moveAndDragPicContainer(pic_container) {
   pic_container.addEventListener("click", function (e) {
     picClick = true;
-    clickedPicNo=pic_container.getAttribute("picFileNo");
+    clickedPicNo = pic_container.getAttribute("picFileNo");
 
     // Move Pic on Mouse-Events
     document.addEventListener("mousedown", function (e) {
       picMouseDown = true;
     })
     document.addEventListener("mousemove", function (e) {
-      let currentPicNo=pic_container.getAttribute("picFileNo");
-      if (picMouseDown && picClick && toolState == 3 && clickedPicNo==currentPicNo) {
+      let currentPicNo = pic_container.getAttribute("picFileNo");
+      if (picMouseDown && picClick && toolState == 3 && clickedPicNo == currentPicNo) {
         let x = e.pageX,
           y = e.pageY;
-          pic_container.style.top = (y + 10) + 'px';
-          pic_container.style.left = (x + 10) + 'px';
+        pic_container.style.top = (y + 10) + 'px';
+        pic_container.style.left = (x + 10) + 'px';
       }
     })
     document.addEventListener("mouseup", function (e) {
@@ -266,6 +296,11 @@ toolContainer.addEventListener("click", function (e) {
 
 //*************************** Zoom-In and Zoom-Out
 zoomIn.addEventListener("click", function (e) {
+  // Reset undo-redo Array
+  if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
+    undoRedoArr.splice(undoRedoIdx+1);
+  }
+
   hideFormatTool(pencilFormatTool);// Hide the Pencil Formatting Tool
   hideFormatTool(eraserFormatTool);// Hide the Eraser Formatting Tool
   toolActive(e.currentTarget);
@@ -289,6 +324,11 @@ zoomIn.addEventListener("click", function (e) {
 })
 
 zoomOut.addEventListener("click", function (e) {
+  // Reset undo-redo Array
+  if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
+    undoRedoArr.splice(undoRedoIdx+1);
+  }
+
   hideFormatTool(pencilFormatTool);
   hideFormatTool(eraserFormatTool);
   toolActive(e.currentTarget);
@@ -313,6 +353,11 @@ zoomOut.addEventListener("click", function (e) {
 
 //**************************** Download
 download.addEventListener("click", function (e) {
+  // Reset undo-redo Array
+  if(undoRedoIdx>=0 && undoRedoIdx<=undoRedoArr.length - 1){
+    undoRedoArr.splice(undoRedoIdx+1);
+  }
+
   hideFormatTool(pencilFormatTool);
   hideFormatTool(eraserFormatTool);
   toolState = 4;  // Tool-Selected
@@ -353,16 +398,45 @@ function downloadCanvas(canvas) {
 }
 
 // Draw All-Added Pictures on CanvasCopy
-function drawPicturesToCanvas(canvasCopy){
-  if(allPicContainers){
+function drawPicturesToCanvas(canvasCopy) {
+  if (allPicContainers) {
     allPicContainers.forEach(picContainerEle => {
-      let obj=picContainerEle.getBoundingClientRect();
-      let copyTool=canvasCopy.getContext("2d");
-      let imageEle=picContainerEle.childNodes[0];
-      let width=obj.right-obj.left;
-      let height=obj.bottom-obj.top;
-      copyTool.drawImage(imageEle,obj.left,obj.top,width,height);
+      let obj = picContainerEle.getBoundingClientRect();
+      let copyTool = canvasCopy.getContext("2d");
+      let imageEle = picContainerEle.childNodes[0];
+      let width = obj.right - obj.left;
+      let height = obj.bottom - obj.top;
+      copyTool.drawImage(imageEle, obj.left, obj.top, width, height);
     });
-  }  
+  }
 }
+
+// ***************************Undo-Redo Operation
+undo.addEventListener("mousedown", function (e) {
+  hideFormatTool(pencilFormatTool);
+  hideFormatTool(eraserFormatTool);
+  toolState=7;
+  toolActive(e.currentTarget);
+  if (undoRedoIdx > 0) {
+    undoRedoIdx--;
+    let canvasCopy = undoRedoArr[undoRedoIdx];
+    // Clear Current-Canvas and Draw the Prevous State of Canvas to Current-Canvas
+    tool.clearRect(0, 0, canvas.width, canvas.height);
+    tool.drawImage(canvasCopy,0,0);
+  }
+})
+
+redo.addEventListener("mousedown", function (e) {
+  hideFormatTool(pencilFormatTool);
+  hideFormatTool(eraserFormatTool);
+  toolState=8;
+  toolActive(e.currentTarget);
+  if (undoRedoIdx < undoRedoArr.length - 1) {
+    undoRedoIdx++;
+    let canvasCopy = undoRedoArr[undoRedoIdx];
+    // Clear Current-Canvas and Draw the Prevous State of Canvas to Current-Canvas
+    tool.clearRect(0, 0, canvas.width, canvas.height);
+    tool.drawImage(canvasCopy,0,0);
+  }
+})
 
