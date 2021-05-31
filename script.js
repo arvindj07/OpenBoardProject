@@ -272,6 +272,8 @@ function deletePicContainer(pic_container) {
 function moveAndDragPicContainer(pic_container) {
   pic_container.addEventListener("click", function (e) {
     picClick = true;
+    toolState = 3; // Image Tool is being used Now
+    toolActive(image);// Set Image as Active
     clickedPicNo = pic_container.getAttribute("picFileNo");
 
     // Move Pic on Mouse-Events
