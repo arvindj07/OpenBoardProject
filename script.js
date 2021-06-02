@@ -234,9 +234,9 @@ fileInput.addEventListener("change", function (e) {
   let file = fileInput.files; // img-file
   // Create and Append Pic-Container To DOM->body
   let pic_container = createPicContainer(file);
-  allPicContainers = document.querySelectorAll(".pic-container");// to update Array-list
   moveAndDragPicContainer(pic_container);// Add event-listener to move pic_container
   deletePicContainer(pic_container);// Add event-listener to delete pic_container
+  allPicContainers = document.querySelectorAll(".pic-container");// to update Array-list,for future use
 })
 
 // Create Pic-Container for Image-File
